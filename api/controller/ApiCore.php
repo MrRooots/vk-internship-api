@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__FILE__) . '/ApiRepository.php';
-require_once dirname(__FILE__) . '/interfaces/IApiCore.php';
+require_once dirname(__FILE__) . '/../interfaces/IApiCore.php';
 require_once dirname(__FILE__) . '/../utils/ResponseGenerator.php';
 
 class ApiCore implements IApiCore {

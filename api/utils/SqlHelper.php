@@ -1,8 +1,15 @@
 <?php
 
 require_once dirname(__FILE__) . '/../config/DBConnect.php';
+require_once dirname(__FILE__) . '/../interfaces/ISqlHelper.php';
 
-class SqlHelper {
+
+/**
+ * Universal sql helper.
+ *
+ * Supports different utility functions to work with database queries and results
+ */
+class SqlHelper implements ISqlHelper {
   static public function get_value($query) {
     $result = mysql_query($query);
 
