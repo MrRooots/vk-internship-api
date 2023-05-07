@@ -5,8 +5,20 @@ require_once dirname(__FILE__) . '/../models/EventModel.php';
 require_once dirname(__FILE__) . '/../utils/ResponseGenerator.php';
 
 
-class Router {
-  static private $ROUTES = array(
+abstract class IRouter {
+  /**
+   * Request method
+   * @var string
+   */
+  protected $_method;
+
+  /**
+   * Request route
+   * @var string
+   */
+  protected $_route;
+
+  protected $ROUTES = array(
     'GET' => array(
       'filter' => 'ApiCore::get_data',
     ),
@@ -15,9 +27,26 @@ class Router {
     )
   );
 
-  static public function get_routes() {
+  abstract protected function _check_request();
+
+  abstract public function get_routes();
+
+  abstract public function handle_request();
+}
+
+class Router extends IRouter {
+  /**
+   * @param string $method
+   * @param string $route
+   */
+  public function __construct($method, $route) {
+    $this->_method = $method;
+    $this->_route = $route;
+  }
+
+  public function get_routes() {
     $routes = array();
-    foreach (self::$ROUTES as $ROUTE) {
+    foreach ($this->ROUTES as $ROUTE) {
       foreach (array_keys($ROUTE) as $array_value) {
         if (!in_array("/$array_value", $routes)) {
           $routes[] = "/$array_value";
@@ -28,44 +57,39 @@ class Router {
     return $routes;
   }
 
-  static private function _check_request($method, $route) {
-    if (self::$ROUTES[$method]) {
-      if (in_array($route, array_keys(self::$ROUTES[$method]))) {
+  protected function _check_request() {
+    if ($this->ROUTES[$this->_method]) {
+      if (in_array($this->_route, array_keys($this->ROUTES[$this->_method]))) {
         return true;
       }
 
-      foreach (self::$ROUTES as $ROUTE) {
-        if (in_array($route, array_keys($ROUTE))) {
+      foreach ($this->ROUTES as $ROUTE) {
+        if (in_array($this->_route, array_keys($ROUTE))) {
           return ResponseGenerator::generate_405_response(
-            "Method [$method] not allowed for [/$route] route"
+            "Method [$this->_method] not allowed for [/$this->_route] route"
           );
         }
       }
 
       $routes = '[' . implode(', ', self::get_routes()) . ']';
       return ResponseGenerator::generate_404_response(
-        "Route [/$route] not found\nPossible routes: $routes"
+        "Route [/$this->_route] not found\nPossible routes: $routes"
       );
     }
 
     return ResponseGenerator::generate_405_response(
-      "Method [$method] not allowed"
+      "Method [$this->_method] not allowed"
     );
   }
 
-  static public function handle_request() {
-    header('Content-Type: application/json');
-
-    $route = $_REQUEST['route'];
-    $method = $_SERVER['REQUEST_METHOD'];
-
-    $check_result = self::_check_request($method, $route);
+  public function handle_request() {
+    $check_result = self::_check_request();
     if ($check_result !== true) {
       return $check_result;
     }
 
     try {
-      return call_user_func(self::$ROUTES[$method][$route]);
+      return call_user_func($this->ROUTES[$this->_method][$this->_route]);
     } catch (Exception $exception) {
       return json_encode(array(
         'success' => 0,
@@ -76,4 +100,9 @@ class Router {
   }
 }
 
-echo Router::handle_request();
+$router = new Router(
+  $_SERVER['REQUEST_METHOD'],
+  $_REQUEST['route']
+);
+
+echo $router->handle_request();
