@@ -37,19 +37,19 @@ class Router extends IRouter {
 
       foreach ($this->ROUTES as $ROUTE) {
         if (in_array($this->_route, array_keys($ROUTE))) {
-          return ResponseGenerator::generate_405_response(
+          return ResponseGenerator::generate_error_response(500,
             "Method [$this->_method] not allowed for [/$this->_route] route"
           );
         }
       }
 
       $routes = '[' . implode(', ', self::get_routes()) . ']';
-      return ResponseGenerator::generate_404_response(
+      return ResponseGenerator::generate_error_response(400,
         "Route [/$this->_route] not found\nPossible routes: $routes"
       );
     }
 
-    return ResponseGenerator::generate_405_response(
+    return ResponseGenerator::generate_error_response(405,
       "Method [$this->_method] not allowed"
     );
   }
@@ -63,7 +63,7 @@ class Router extends IRouter {
     try {
       return call_user_func($this->ROUTES[$this->_method][$this->_route]);
     } catch (Exception $exception) {
-      return ResponseGenerator::generate_500_response(
+      return ResponseGenerator::generate_error_response(500,
         'Unhandled exception'
       );
     }

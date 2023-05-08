@@ -1,6 +1,9 @@
 <?php
 
-class ResponseGenerator {
+require_once dirname(__FILE__) . '/../interfaces/IResponseGenerator.php';
+
+
+class ResponseGenerator implements IResponseGenerator {
   static private $RESPONSE_ERRORS = array(
     '200' => '200 OK',
     '201' => '201 Created',
@@ -10,8 +13,8 @@ class ResponseGenerator {
     '500' => '500 Internal Server Error',
   );
 
-  static public function generate_200_response(array $data) {
-    $error = self::$RESPONSE_ERRORS['200'];
+  static public function generate_successful_response($code, array $data) {
+    $error = self::$RESPONSE_ERRORS["$code"];
     header("HTTP/0.1 $error");
 
     return json_encode(array_merge(
@@ -20,56 +23,13 @@ class ResponseGenerator {
     ));
   }
 
-  static public function generate_201_response(array $data) {
-    $error = self::$RESPONSE_ERRORS['201'];
-    header("HTTP/0.1 $error");
-
-    return json_encode(array_merge(
-      array('success' => 1),
-      $data
-    ));
-  }
-
-  static public function generate_400_response($description) {
-    $error = self::$RESPONSE_ERRORS['400'];
+  static public function generate_error_response($code, $description) {
+    $error = self::$RESPONSE_ERRORS["$code"];
     header("HTTP/0.1 $error");
 
     return json_encode(array(
       'success' => 0,
-      'error' => self::$RESPONSE_ERRORS['400'],
-      'description' => $description,
-    ));
-  }
-
-  static public function generate_404_response($description) {
-    $error = self::$RESPONSE_ERRORS['404'];
-    header("HTTP/0.1 $error");
-
-    return json_encode(array(
-      'success' => 0,
-      'error' => self::$RESPONSE_ERRORS['404'],
-      'description' => $description,
-    ));
-  }
-
-  static public function generate_405_response($description) {
-    $error = self::$RESPONSE_ERRORS['405'];
-    header("HTTP/0.1 $error");
-
-    return json_encode(array(
-      'success' => 0,
-      'error' => self::$RESPONSE_ERRORS['405'],
-      'description' => $description,
-    ));
-  }
-
-  static public function generate_500_response($description) {
-    $error = self::$RESPONSE_ERRORS['500'];
-    header("HTTP/0.1 $error");
-
-    return json_encode(array(
-      'success' => 0,
-      'error' => self::$RESPONSE_ERRORS['500'],
+      'error' => self::$RESPONSE_ERRORS["$code"],
       'description' => $description,
     ));
   }

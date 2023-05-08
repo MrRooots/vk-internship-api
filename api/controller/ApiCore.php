@@ -18,15 +18,15 @@ class ApiCore implements IApiCore {
     $aggregations = array('user_ip', 'event_name', 'user_status');
 
     if (!($event_name and $start and $end and $aggregate_by)) {
-      return ResponseGenerator::generate_400_response(
+      return ResponseGenerator::generate_error_response(400,
         "Request [event_name: string], [start: date('Y-m-d')], [end: date('Y-m-d')] and [aggregate_by: string { user_ip, event_name, user_status }] params are required"
       );
     } else if (!(Utils::validate_date_format($start) and Utils::validate_date_format($end))) {
-      return ResponseGenerator::generate_400_response(
+      return ResponseGenerator::generate_error_response(400,
         "Request [start: date('Y-m-d')] or/and [end: date('Y-m-d')] params format are invalid"
       );
     } else if (!in_array($aggregate_by, $aggregations)) {
-      return ResponseGenerator::generate_400_response(
+      return ResponseGenerator::generate_error_response(400,
         "Request [aggregate_by: string { user_ip, event_name, user_status }] value is invalid"
       );
     }
@@ -45,12 +45,12 @@ class ApiCore implements IApiCore {
 
     // Validate input data
     if (in_array(null, array_values($data), true)) {
-      return ResponseGenerator::generate_400_response(
+      return ResponseGenerator::generate_error_response(400,
         "Request [event_name: string] and [user_status: bool] params are required"
       );
     }
 
-    return ResponseGenerator::generate_200_response(array(
+    return ResponseGenerator::generate_successful_response(201, array(
       'event' => ApiRepository::save_data($data)->to_json(),
     ));
   }
@@ -67,7 +67,7 @@ class ApiCore implements IApiCore {
       return $validation_result;
     }
 
-    return ResponseGenerator::generate_200_response(array(
+    return ResponseGenerator::generate_successful_response(200, array(
       'event_name' => $event_name,
       'start_date' => $start,
       'end_date' => $end,
