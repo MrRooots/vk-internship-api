@@ -1,11 +1,9 @@
 <?php
 
-class Utils {
-  /**
-   * Get body of the request.
-   *
-   * @return array<string, mixed>
-   */
+require_once dirname(__FILE__) . '/../interfaces/IUtils.php';
+
+
+class Utils implements IUtils {
   static public function get_request_body() {
     return json_decode(file_get_contents('php://input'), true);
   }

@@ -2,27 +2,11 @@
 
 require_once dirname(__FILE__) . '/../utils/SqlHelper.php';
 require_once dirname(__FILE__) . '/../models/EventModel.php';
+require_once dirname(__FILE__) . '/../interfaces/IApiRepository.php';
 
-class ApiRepository {
-  static public function get_records() {
-    $users = array();
-    $data = SqlHelper::get_all_rows("
-      select * from events
-    ");
 
-    foreach ($data as $user_data) {
-      $users[] = new EventModel($user_data);
-    }
-
-    return $users;
-  }
-
-  static public function get_records_where(
-    $event_name,
-    $start,
-    $end,
-    $aggregate_by
-  ) {
+class ApiRepository implements IApiRepository {
+  static public function get_records_where($event_name, $start, $end, $aggregate_by) {
     $users = array();
 
     $data = SqlHelper::get_all_rows("
@@ -47,11 +31,6 @@ class ApiRepository {
     return $users;
   }
 
-  /**
-   * Save given `data` to database
-   * @param array $data
-   * @return EventModel
-   */
   static public function save_data(array $data) {
     $auth = (int)$data['user_status'];
 

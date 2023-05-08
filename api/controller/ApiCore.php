@@ -6,6 +6,14 @@ require_once dirname(__FILE__) . '/../utils/ResponseGenerator.php';
 require_once dirname(__FILE__) . '/../utils/Utils.php';
 
 class ApiCore implements IApiCore {
+  /**
+   * Validate request parameters
+   * @param string $event_name
+   * @param string $start
+   * @param string $end
+   * @param string $aggregate_by
+   * @return bool|string True if request valid, json string otherwise
+   */
   static private function _validate_request($event_name, $start, $end, $aggregate_by) {
     $aggregations = array('user_ip', 'event_name', 'user_status');
 
