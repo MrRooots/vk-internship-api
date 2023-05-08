@@ -7,7 +7,7 @@ class ResponseGenerator {
     '400' => '400 Bad Request',
     '404' => '404 Not Found',
     '405' => '405 Method Not Allowed',
-    '500' => '405 Internal Server Error',
+    '500' => '500 Internal Server Error',
   );
 
   static public function generate_200_response(array $data) {

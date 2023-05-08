@@ -1,0 +1,268 @@
+openapi: 3.0.0
+info:
+  title: VK Internship API
+  description: A set of API methods for saving events and getting statistics.
+  version: 1.0.0
+
+tags:
+  - name: statistic
+    description: Statistic collection and visualization API
+
+servers:
+  - url: 'http://vk.internship.api.com'
+paths:
+  /filter:
+    get:
+      tags:
+        - statistic
+      summary: Filter existing events data
+      description: Get data about events filtered by date and event name with aggregation by count, ip or user
+      parameters:
+        - in: query
+          name: aggregate_by
+          description: Type of requested aggregation
+          required: true
+          schema:
+            type: string
+            enum:
+              - event_name
+              - user_ip
+              - user_authenticated
+        - in: query
+          name: event_name
+          description: Name of the requested event
+          required: true
+          schema:
+            type: string
+          example: login
+        - in: query
+          name: start
+          description: Start date
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: ^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$
+            example: "2023-05-01"
+        - in: query
+          name: end
+          description: End date
+          required: true
+          schema:
+            type: string
+            format: date
+            pattern: ^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$
+            example: "2023-05-10"
+      responses:
+        '200':
+          description: Successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilteredResponse'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '405':
+          description: Invalid request method
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+
+  /save:
+    post:
+      tags:
+        - statistic
+      summary: Add single event data
+      description: Save information about new event
+      responses:
+        '200':
+          description: Event saved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventModel'
+        '400':
+          description: Invalid input data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '405':
+          description: Invalid request method
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+
+
+components:
+  schemas:
+    FilteredResponse:
+      type: object
+      required:
+        - event_name
+        - start_date
+        - end_date
+        - statistic
+      properties:
+        success:
+          type: integer
+          default: 1
+        event_name:
+          type: string
+          description: Name of the requested event
+        start_date:
+          type: string
+          format: date
+          description: Date period start
+        end_date:
+          type: string
+          format: date
+          description: Date period end
+        aggregation:
+          type: string
+          enum:
+            - event_name
+            - user_ip
+            - user_authenticate
+          description: Aggregation by parameter
+        statistic:
+          type: object
+          properties:
+            count_by_{aggregation}:
+              type: string
+              enum:
+                - count_by_event_name
+                - count_by_user_ip
+                - count_by_user_authenticate
+            aggregation_data:
+              type: object
+              properties:
+                key:
+                  type: string
+                value:
+                  type: integer
+
+    EventModel:
+      type: object
+      required:
+        - id
+        - event_name
+        - created_at
+        - user_authenticated
+        - user_ip
+      properties:
+        id:
+          type: integer
+          description: Event id from DB
+        event_name:
+          type: string
+          description: Name of the event
+        created_at:
+          type: string
+          format: date-time
+          description: Event creation date (added when event saved to DB)
+        user_authenticated:
+          type: boolean
+          description: Is user authenticated
+        user_ip:
+          type: string
+          description: User IPv4 address
+
+    EventSaveRequest:
+      type: object
+      required:
+        - event_name
+        - user_authenticated
+      properties:
+        event_name:
+          type: string
+          description: Name of the event
+        user_authenticated:
+          type: boolean
+          description: Is user authenticated or not
+          enum:
+            - true
+            - false
+
+    Error400:
+      type: object
+      required:
+        - success
+        - error
+        - description
+      properties:
+        success:
+          type: integer
+          enum:
+            - 0
+            - 1
+          default: 0
+        error:
+          type: string
+          description: Server error
+          default: 404 Not Found
+        description:
+          type: string
+          description: Full error description
+
+    Error405:
+      type: object
+      required:
+        - success
+        - error
+        - description
+      properties:
+        success:
+          type: integer
+          enum:
+            - 0
+            - 1
+          default: 0
+        error:
+          type: string
+          description: Server error
+          default: 405 Method Not Allowed
+        description:
+          type: string
+          description: Full error description
+
+    Error500:
+      type: object
+      required:
+        - success
+        - error
+        - description
+      properties:
+        success:
+          type: integer
+          enum:
+            - 0
+            - 1
+          default: 0
+        error:
+          type: string
+          description: Server error
+          default: 500 Internal Server Error
+        description:
+          type: string
+          description: Full error description
+
+

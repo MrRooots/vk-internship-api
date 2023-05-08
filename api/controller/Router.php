@@ -3,36 +3,8 @@
 require_once dirname(__FILE__) . '/ApiCore.php';
 require_once dirname(__FILE__) . '/../models/EventModel.php';
 require_once dirname(__FILE__) . '/../utils/ResponseGenerator.php';
+require_once dirname(__FILE__) . '/../interfaces/IRouter.php';
 
-
-abstract class IRouter {
-  /**
-   * Request method
-   * @var string
-   */
-  protected $_method;
-
-  /**
-   * Request route
-   * @var string
-   */
-  protected $_route;
-
-  protected $ROUTES = array(
-    'GET' => array(
-      'filter' => 'ApiCore::get_data',
-    ),
-    'POST' => array(
-      'save' => 'ApiCore::save_data',
-    )
-  );
-
-  abstract protected function _check_request();
-
-  abstract public function get_routes();
-
-  abstract public function handle_request();
-}
 
 class Router extends IRouter {
   /**
@@ -44,7 +16,7 @@ class Router extends IRouter {
     $this->_route = $route;
   }
 
-  public function get_routes() {
+  protected function get_routes() {
     $routes = array();
     foreach ($this->ROUTES as $ROUTE) {
       foreach (array_keys($ROUTE) as $array_value) {
@@ -91,11 +63,9 @@ class Router extends IRouter {
     try {
       return call_user_func($this->ROUTES[$this->_method][$this->_route]);
     } catch (Exception $exception) {
-      return json_encode(array(
-        'success' => 0,
-        'error' => '500 Internal Server Error',
-        'description' => 'Unhandled exception'
-      ));
+      return ResponseGenerator::generate_500_response(
+        'Unhandled exception'
+      );
     }
   }
 }

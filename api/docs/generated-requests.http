@@ -1,0 +1,5 @@
+###
+POST http://localhost/api/register
+
+###
+GET /http/filter
