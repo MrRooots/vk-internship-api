@@ -10,6 +10,7 @@ tags:
 
 servers:
   - url: 'http://vk.internship.api.com'
+  - url: 'https://mrrooots.alwaysdata.net/'
 paths:
   /filter:
     get:
@@ -85,6 +86,12 @@ paths:
         - statistic
       summary: Add single event data
       description: Save information about new event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddEventRequest'
       responses:
         '200':
           description: Event saved successfully
@@ -114,6 +121,18 @@ paths:
 
 components:
   schemas:
+    AddEventRequest:
+      type: object
+      required:
+        - event_name
+        - user_status
+      properties:
+        event_name:
+          type: string
+          description: Name of the event
+        user_status:
+          type: boolean
+          description: User authentication status
     FilteredResponse:
       type: object
       required:
