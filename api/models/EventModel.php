@@ -15,7 +15,7 @@ class EventModel extends EventEntity {
     $this->_id = $data['id'];
     $this->_event_name = $data['event_name'];
     $this->_created_at = $data['created_at'];
-    $this->_user_authenticated = $data['user_authenticated'];
+    $this->_user_status = $data['user_status'];
     $this->_user_ip = $data['user_ip'];
   }
 
@@ -28,8 +28,8 @@ class EventModel extends EventEntity {
       'id' => $this->_id,
       'event_name' => $this->_event_name,
       'created_at' => $this->_created_at,
-      'user_authenticated' => AuthenticationStatus::get_status(
-        $this->_user_authenticated
+      'user_status' => AuthenticationStatus::get_status(
+        $this->_user_status
       ),
       'user_ip' => long2ip($this->_user_ip),
     );

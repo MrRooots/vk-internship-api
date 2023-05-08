@@ -24,7 +24,7 @@ abstract class EventEntity {
    * User authentication status { 0 == 'unauthenticated' | 1 == 'authenticated' }
    * @var int
    */
-  protected $_user_authenticated;
+  protected $_user_status;
 
   /**
    * User ip
@@ -63,7 +63,7 @@ abstract class EventEntity {
   /**
    * @return int
    */
-  public function get_user_authenticated() {
-    return $this->_user_authenticated;
+  public function get_user_status() {
+    return $this->_user_status;
   }
 }

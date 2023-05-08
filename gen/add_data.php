@@ -165,7 +165,7 @@ foreach ($ips as $ip) {
   $created_at = date('Y-m-d H:m:s', mt_rand(1682940178, 1683717778));
 
   SqlHelper::execute_query("
-    insert into events (event_name, created_at, user_ip, user_authenticated)
+    insert into events (event_name, created_at, user_ip, user_status)
     values ('$event', '$created_at', inet_aton('$ip'), $_auth)
   ");
 }

@@ -35,7 +35,7 @@ class ApiRepository {
     foreach ($data as $user_data) {
       if ($aggregate_by == 'user_ip') {
         $key = long2ip($user_data[$aggregate_by]);
-      } else if ($aggregate_by == 'user_authenticated') {
+      } else if ($aggregate_by == 'user_status') {
         $key = AuthenticationStatus::get_status((int)$user_data[$aggregate_by]);
       } else {
         $key = $user_data[$aggregate_by];
@@ -53,10 +53,10 @@ class ApiRepository {
    * @return EventModel
    */
   static public function save_data(array $data) {
-    $auth = (int)$data['user_authenticated'];
+    $auth = (int)$data['user_status'];
 
     SqlHelper::execute_query("
-      insert into events(event_name, created_at, user_ip, user_authenticated) 
+      insert into events(event_name, created_at, user_ip, user_status) 
       value (
         '${data['event_name']}', 
         '${data['created_at']}', 

@@ -27,7 +27,7 @@ paths:
             enum:
               - event_name
               - user_ip
-              - user_authenticated
+              - user_status
         - in: query
           name: event_name
           description: Name of the requested event
@@ -141,7 +141,7 @@ components:
           enum:
             - event_name
             - user_ip
-            - user_authenticate
+            - user_status
           description: Aggregation by parameter
         statistic:
           type: object
@@ -151,7 +151,7 @@ components:
               enum:
                 - count_by_event_name
                 - count_by_user_ip
-                - count_by_user_authenticate
+                - count_by_user_status
             aggregation_data:
               type: object
               properties:
@@ -166,7 +166,7 @@ components:
         - id
         - event_name
         - created_at
-        - user_authenticated
+        - user_status
         - user_ip
       properties:
         id:
@@ -179,7 +179,7 @@ components:
           type: string
           format: date-time
           description: Event creation date (added when event saved to DB)
-        user_authenticated:
+        user_status:
           type: boolean
           description: Is user authenticated
         user_ip:
@@ -190,12 +190,12 @@ components:
       type: object
       required:
         - event_name
-        - user_authenticated
+        - user_status
       properties:
         event_name:
           type: string
           description: Name of the event
-        user_authenticated:
+        user_status:
           type: boolean
           description: Is user authenticated or not
           enum:

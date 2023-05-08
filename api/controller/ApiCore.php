@@ -7,11 +7,11 @@ require_once dirname(__FILE__) . '/../utils/Utils.php';
 
 class ApiCore implements IApiCore {
   static private function _validate_request($event_name, $start, $end, $aggregate_by) {
-    $aggregations = array('user_ip', 'event_name', 'user_authenticated');
+    $aggregations = array('user_ip', 'event_name', 'user_status');
 
     if (!($event_name and $start and $end and $aggregate_by)) {
       return ResponseGenerator::generate_400_response(
-        "Request [event_name: string], [start: date('Y-m-d')], [end: date('Y-m-d')] and [aggregate_by: string { user_ip, event_name, user_authenticated }] params are required"
+        "Request [event_name: string], [start: date('Y-m-d')], [end: date('Y-m-d')] and [aggregate_by: string { user_ip, event_name, user_status }] params are required"
       );
     } else if (!(Utils::validate_date_format($start) and Utils::validate_date_format($end))) {
       return ResponseGenerator::generate_400_response(
@@ -19,7 +19,7 @@ class ApiCore implements IApiCore {
       );
     } else if (!in_array($aggregate_by, $aggregations)) {
       return ResponseGenerator::generate_400_response(
-        "Request [aggregate_by: string { user_ip, event_name, user_authenticated }] value is invalid"
+        "Request [aggregate_by: string { user_ip, event_name, user_status }] value is invalid"
       );
     }
 
@@ -31,14 +31,14 @@ class ApiCore implements IApiCore {
     $data = array(
       'event_name' => strtolower($json['event_name']),
       'created_at' => $json['created_at'] ?: date('Y-m-d H:i:s'),
-      'user_authenticated' => $json['user_authenticated'],
+      'user_status' => $json['user_status'],
       'user_ip' => $json['user_ip'] ?: $_SERVER['REMOTE_ADDR'],
     );
 
     // Validate input data
     if (in_array(null, array_values($data), true)) {
       return ResponseGenerator::generate_400_response(
-        "Request [event_name: string] and [user_authenticated: bool] params are required"
+        "Request [event_name: string] and [user_status: bool] params are required"
       );
     }
 
