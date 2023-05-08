@@ -10,7 +10,9 @@ tags:
 
 servers:
   - url: 'http://vk.internship.api.com'
+    description: Localhost
   - url: 'https://mrrooots.alwaysdata.net/'
+    description: Remote
 paths:
   /filter:
     get:
