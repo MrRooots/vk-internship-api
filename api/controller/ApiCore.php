@@ -5,6 +5,7 @@ require_once dirname(__FILE__) . '/../interfaces/IApiCore.php';
 require_once dirname(__FILE__) . '/../utils/ResponseGenerator.php';
 require_once dirname(__FILE__) . '/../utils/Utils.php';
 
+
 class ApiCore implements IApiCore {
   /**
    * Validate request parameters
