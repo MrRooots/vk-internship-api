@@ -1,7 +1,3 @@
-php_value display_errors On
-php_value mbstring.http_input auto
-php_value date.timezone Europe/Moscow
-
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 
